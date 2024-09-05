@@ -1,0 +1,41 @@
+services:
+  frontend:
+    image: nginx:1.27.1-alpine-slim
+    ports:
+      - 80:80
+      # - 443:443
+    environment:
+      - NGINX_HOST=usermanager.local
+      - NGINX_PORT=80
+    networks:
+      - challenge001
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - challenge001
+
+  db:
+    image: postgres:16.4-bookworm
+    restart: unless-stopped
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: myrandompassword123
+      POSTGRES_DB: usermanager
+    networks:
+      - challenge001
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - challenge001
+
+networks:
+  challenge001:
+    driver: bridge
+
